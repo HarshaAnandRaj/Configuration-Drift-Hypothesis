@@ -33,7 +33,6 @@ def collapse_metrics(X):
     late = X[h:]
 
     seen = set()
-    counts = {}
     exact = np.zeros(n, dtype=bool)
     osc2 = np.zeros(n, dtype=bool)
     for t in range(1, n):
@@ -43,10 +42,12 @@ def collapse_metrics(X):
         if t >= 2 and key == tuple(X[t - 2]):
             osc2[t] = True
         seen.add(key)
-        counts[key] = counts.get(key, 0) + 1
 
-    v = np.array(list(counts.values()), dtype=float)[h:]      # rough: late bias ok
-    v = v[v > 0]
+    late_counts = {}
+    for x in late:
+        k = tuple(x)
+        late_counts[k] = late_counts.get(k, 0) + 1
+    v = np.array(list(late_counts.values()), dtype=float)
     p = v / v.sum()
     eff = float(1.0 / (p ** 2).sum())
 
